@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>MongoDB集群（副本集）安装教程</title>
+    <url>/2019/12/28/MongoDB/</url>
+    <content><![CDATA[<h4 id="一、准备工作"><a href="#一、准备工作" class="headerlink" title="一、准备工作"></a>一、准备工作</h4><table>
+<thead>
+<tr>
+<th>节点</th>
+<th>主机名</th>
+<th>ip</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PRIMARY</td>
+<td>mongodb01</td>
+<td>10.101.70.67</td>
+</tr>
+<tr>
+<td>SECONDARY</td>
+<td>mongodb02</td>
+<td>10.101.70.68</td>
+</tr>
+<tr>
+<td>SECONDARY</td>
+<td>mongodb03</td>
+<td>10.101.70.69</td>
+</tr>
+</tbody></table>
+<p>系统三步法:</p>
+<ul>
+<li>确定linux系统版本：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># cat /etc/redhat-release</span></span><br><span class="line">CentOS Linux release 7.4.1708 (Core)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>关闭防火墙</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl disable firewalld</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>关闭selinux</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setenforce 0</span><br><span class="line">vi /etc/sysconfig/selinux</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/12/28/MongoDB/image-20191129095235119.png" alt="Mongodb"></p>
+<h4 id="二、部署MongoDB"><a href="#二、部署MongoDB" class="headerlink" title="二、部署MongoDB"></a>二、部署MongoDB</h4><p>1、下载MongoDB4.0.6安装包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.0.6.tgz</span><br></pre></td></tr></table></figure>
+
+<p>2、解压安装包，把目录重命名移动到usr/local目录下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar -zxvf mongodb-linux-x86_64-rhel70-4.0.6.tgz</span><br><span class="line">mv mongodb-linux-x86_64-rhel70-4.0.6 mongodb</span><br><span class="line">mv mongodb /usr/<span class="built_in">local</span>/</span><br></pre></td></tr></table></figure>
+
+<p>3、新建数据库目录、日志文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/mongodb</span><br><span class="line">mkdir data</span><br><span class="line">mkdir logs</span><br><span class="line"><span class="built_in">cd</span> logs</span><br><span class="line">touch mongodb.log</span><br></pre></td></tr></table></figure>
+
+<p>4、新建MongoDB配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf</span><br><span class="line"></span><br><span class="line">dbpath=/usr/<span class="built_in">local</span>/mongodb/data/db           <span class="comment">#数据库文件</span></span><br><span class="line">logpath=/usr/<span class="built_in">local</span>/mongodb/logs/mongodb.log <span class="comment">#日志文件</span></span><br><span class="line">bind_ip=10.101.70.67</span><br><span class="line">port=27017</span><br><span class="line">fork=<span class="literal">true</span>                                   <span class="comment">#是否以守护进程方式运行</span></span><br><span class="line">logappend=<span class="literal">true</span>                              <span class="comment">#是否追加写入日志</span></span><br><span class="line">shardsvr=<span class="literal">true</span></span><br><span class="line">directoryperdb=<span class="literal">true</span></span><br><span class="line">replSet=hdreplset</span><br><span class="line">auth=<span class="literal">false</span>                                   <span class="comment">#是否开启认证,默认是不开启认证</span></span><br><span class="line">keyFile=/usr/<span class="built_in">local</span>/mongodb/keyfile/keyfile  <span class="comment">#认证key位置（默认无）</span></span><br></pre></td></tr></table></figure>
+
+<p>5、配置环境变量</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> MONGODB_HOME=/usr/<span class="built_in">local</span>/mongodb  </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$MONGODB_HOME</span>/bin</span><br></pre></td></tr></table></figure>
+
+<p>6、配置生效</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+
+<p>7、MongoDB自启动脚本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /usr/lib/systemd/system/mongodb.service</span><br><span class="line"></span><br><span class="line">[Unit]</span><br><span class="line">Description=mongodb</span><br><span class="line">After=network.target remote-fs.target nss-lookup.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/usr/<span class="built_in">local</span>/mongodb/bin/mongod -f /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf</span><br><span class="line">ExecReload=/bin/<span class="built_in">kill</span> -s HUP <span class="variable">$MAINPID</span></span><br><span class="line">ExecStop=/usr/<span class="built_in">local</span>/mongodb/bin/mongod --shutdown -f /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf</span><br><span class="line">PrivateTmp=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /etc/rc.d/rc.local <span class="comment">#加入下面的自启动脚本 </span></span><br><span class="line">/usr/<span class="built_in">local</span>/mongodb/bin/mongod -f /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf </span><br><span class="line"></span><br><span class="line"><span class="comment">##这种的话后面启动使用如下命令</span></span><br><span class="line"><span class="comment">#  /usr/local/mongodb/bin/mongod -f /usr/local/mongodb/bin/mongodb.conf</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>8、刷新配置，启动mongodb并设置自运行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start mongodb</span><br><span class="line">systemctl <span class="built_in">enable</span> mongodb</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>同样操作部署三台，登录成功说明安装正常(目前是未开启认证状态)</p>
+<p>mongo 10.101.70.67:27017</p>
+<p>mongo 10.101.70.68:27017</p>
+<p>mongo 10.101.70.69:27017</p>
+</blockquote>
+<h4 id="三、配置MongoDB集群"><a href="#三、配置MongoDB集群" class="headerlink" title="三、配置MongoDB集群"></a>三、配置MongoDB集群</h4><p>1、登录主节点</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mongo 10.101.72.67:27017</span><br></pre></td></tr></table></figure>
+
+<p>2、初始化副本集</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">rs.initiate()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	"info2" : "no configuration specified. Using a default configuration for the <span class="keyword">set</span><span class="string">",</span></span><br><span class="line"><span class="string">	"</span>me<span class="string">" : "</span><span class="number">10.101</span><span class="number">.70</span><span class="number">.67</span>:<span class="number">27017</span><span class="string">",</span></span><br><span class="line"><span class="string">	"</span>ok<span class="string">" : 1,</span></span><br><span class="line"><span class="string">	"</span>operationTime<span class="string">" : Timestamp(1552800562, 1),</span></span><br><span class="line"><span class="string">	"</span>$clusterTime<span class="string">" : &#123;</span></span><br><span class="line"><span class="string">		"</span>clusterTime<span class="string">" : Timestamp(1552800562, 1),</span></span><br><span class="line"><span class="string">		"</span>signature<span class="string">" : &#123;</span></span><br><span class="line"><span class="string">			"</span><span class="keyword">hash</span><span class="string">" : BinData(0,"</span>AAAAAAAAAAAAAAAAAAAAAAAAAAA=<span class="string">"),</span></span><br><span class="line"><span class="string">			"</span>keyId<span class="string">" : NumberLong(0)</span></span><br><span class="line"><span class="string">		&#125;</span></span><br><span class="line"><span class="string">	&#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>3、将该节点设置为主节点</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">rs.conf()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	"_id" : "hdreplset",</span><br><span class="line">	"version" : 1,</span><br><span class="line">	"protocolVersion" : NumberLong(1),</span><br><span class="line">	"writeConcernMajorityJournalDefault" : true,</span><br><span class="line">	"members" : [</span><br><span class="line">		&#123;</span><br><span class="line">			"_id" : 0,</span><br><span class="line">			"host" : "10.101.70.67:27017",</span><br><span class="line">			"arbiterOnly" : false,</span><br><span class="line">			"buildIndexes" : true,</span><br><span class="line">			"hidden" : false,</span><br><span class="line">			"priority" : 1,</span><br><span class="line">			"tags" : &#123;</span><br><span class="line">				</span><br><span class="line">			&#125;,</span><br><span class="line">			"slaveDelay" : NumberLong(0),</span><br><span class="line">			"votes" : 1</span><br><span class="line">		&#125;</span><br><span class="line">	],</span><br><span class="line">	"settings" : &#123;</span><br><span class="line">		"chainingAllowed" : true,</span><br><span class="line">		"heartbeatIntervalMillis" : 2000,</span><br><span class="line">		"heartbeatTimeoutSecs" : 10,</span><br><span class="line">		"electionTimeoutMillis" : 10000,</span><br><span class="line">		"catchUpTimeoutMillis" : -1,</span><br><span class="line">		"catchUpTakeoverDelayMillis" : 30000,</span><br><span class="line">		"getLastErrorModes" : &#123;</span><br><span class="line">			</span><br><span class="line">		&#125;,</span><br><span class="line">		"getLastErrorDefaults" : &#123;</span><br><span class="line">			"w" : 1,</span><br><span class="line">			"wtimeout" : 0</span><br><span class="line">		&#125;,</span><br><span class="line">		"replicaSetId" : ObjectId("5c8ddb326676686d9715c116")</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>4、将另外两个节点加入副本集</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">rs.add("10.101.70.68:27017")</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	"ok" : 1,</span><br><span class="line">	"operationTime" : Timestamp(1552800715, 1),</span><br><span class="line">	"$clusterTime" : &#123;</span><br><span class="line">		"clusterTime" : Timestamp(1552800715, 1),</span><br><span class="line">		"signature" : &#123;</span><br><span class="line">			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),</span><br><span class="line">			"keyId" : NumberLong(0)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">rs.add("10.101.70.69:27017")</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	"ok" : 1,</span><br><span class="line">	"operationTime" : Timestamp(1552800726, 1),</span><br><span class="line">	"$clusterTime" : &#123;</span><br><span class="line">		"clusterTime" : Timestamp(1552800726, 1),</span><br><span class="line">		"signature" : &#123;</span><br><span class="line">			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),</span><br><span class="line">			"keyId" : NumberLong(0)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>5、查看副本集状态</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">cfg = rs.conf()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	"_id" : "hdreplset",</span><br><span class="line">	"version" : 4,</span><br><span class="line">	"protocolVersion" : NumberLong(1),</span><br><span class="line">	"writeConcernMajorityJournalDefault" : true,</span><br><span class="line">	"members" : [</span><br><span class="line">		&#123;</span><br><span class="line">			"_id" : 0,</span><br><span class="line">			"host" : "10.101.70.67:27017",</span><br><span class="line">			"arbiterOnly" : false,</span><br><span class="line">			"buildIndexes" : true,</span><br><span class="line">			"hidden" : false,</span><br><span class="line">			"priority" : 2,</span><br><span class="line">			"tags" : &#123;</span><br><span class="line">				</span><br><span class="line">			&#125;,</span><br><span class="line">			"slaveDelay" : NumberLong(0),</span><br><span class="line">			"votes" : 1</span><br><span class="line">		&#125;,</span><br><span class="line">		&#123;</span><br><span class="line">			"_id" : 1,</span><br><span class="line">			"host" : "10.101.70.68:27017",</span><br><span class="line">			"arbiterOnly" : false,</span><br><span class="line">			"buildIndexes" : true,</span><br><span class="line">			"hidden" : false,</span><br><span class="line">			"priority" : 1,</span><br><span class="line">			"tags" : &#123;</span><br><span class="line">				</span><br><span class="line">			&#125;,</span><br><span class="line">			"slaveDelay" : NumberLong(0),</span><br><span class="line">			"votes" : 1</span><br><span class="line">		&#125;,</span><br><span class="line">		&#123;</span><br><span class="line">			"_id" : 2,</span><br><span class="line">			"host" : "10.101.70.69:27017",</span><br><span class="line">			"arbiterOnly" : false,</span><br><span class="line">			"buildIndexes" : true,</span><br><span class="line">			"hidden" : false,</span><br><span class="line">			"priority" : 1,</span><br><span class="line">			"tags" : &#123;</span><br><span class="line">				</span><br><span class="line">			&#125;,</span><br><span class="line">			"slaveDelay" : NumberLong(0),</span><br><span class="line">			"votes" : 1</span><br><span class="line">		&#125;</span><br><span class="line">	],</span><br><span class="line">	"settings" : &#123;</span><br><span class="line">		"chainingAllowed" : true,</span><br><span class="line">		"heartbeatIntervalMillis" : 2000,</span><br><span class="line">		"heartbeatTimeoutSecs" : 10,</span><br><span class="line">		"electionTimeoutMillis" : 10000,</span><br><span class="line">		"catchUpTimeoutMillis" : -1,</span><br><span class="line">		"catchUpTakeoverDelayMillis" : 30000,</span><br><span class="line">		"getLastErrorModes" : &#123;</span><br><span class="line">			</span><br><span class="line">		&#125;,</span><br><span class="line">		"getLastErrorDefaults" : &#123;</span><br><span class="line">			"w" : 1,</span><br><span class="line">			"wtimeout" : 0</span><br><span class="line">		&#125;,</span><br><span class="line">		"replicaSetId" : ObjectId("5db69761d02396826793590d")</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> priority参数表示的是节点的优先级，越大优先级越高 , 把10.101.72.67作为优先级最高的主节点 </p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">hdreplset:PRIMARY&gt; cfg.members[0].priority = 2</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>6、保存配置</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">rs.reconfig(cfg)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	"ok" : 1,</span><br><span class="line">	"operationTime" : Timestamp(1552800913, 1),</span><br><span class="line">	"$clusterTime" : &#123;</span><br><span class="line">		"clusterTime" : Timestamp(1552800913, 1),</span><br><span class="line">		"signature" : &#123;</span><br><span class="line">			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),</span><br><span class="line">			"keyId" : NumberLong(0)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>7、确认副本集优先级是否生效</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">cfg = rs.conf()</span><br></pre></td></tr></table></figure>
+
+<p>8、从节点配置</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">mongo 10.101.70.68:27017</span><br><span class="line">hdreplset:SECONDARY&gt; db.getMongo().setSlaveOk()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">mongo 10.101.70.69:27017</span><br><span class="line">hdreplset:SECONDARY&gt; db.getMongo().setSlaveOk()</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="四、新建MongoDB用户"><a href="#四、新建MongoDB用户" class="headerlink" title="四、新建MongoDB用户"></a>四、新建MongoDB用户</h4><p>1、登录主节点</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mongo 10.101.70.67:27017</span><br></pre></td></tr></table></figure>
+
+<p>2、添加用户</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="comment">#root用户</span></span><br><span class="line"><span class="keyword">use</span> <span class="keyword">admin</span>;</span><br><span class="line">db.createUser(&#123;user:"admin",pwd:"123456",roles:[&#123;role:"root",db:"admin"&#125;]&#125;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">#数据库管理员</span></span><br><span class="line"><span class="keyword">use</span> wx-<span class="keyword">test</span></span><br><span class="line">db.createUser(&#123;<span class="keyword">user</span>: <span class="string">"wx-test"</span>, pwd: <span class="string">"123456"</span>, <span class="keyword">roles</span>: [&#123; <span class="keyword">role</span>: <span class="string">"dbOwner"</span>, db: <span class="string">"wx-test"</span> &#125;]&#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="五、添加授权配置"><a href="#五、添加授权配置" class="headerlink" title="五、添加授权配置"></a>五、添加授权配置</h4><p>1、修改配置文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf</span><br><span class="line"></span><br><span class="line">bind_ip=10.101.70.67</span><br><span class="line">port=27017</span><br><span class="line">fork=<span class="literal">true</span></span><br><span class="line">logappend=<span class="literal">true</span></span><br><span class="line">shardsvr=<span class="literal">true</span></span><br><span class="line">directoryperdb=<span class="literal">true</span></span><br><span class="line">replSet=hdreplset</span><br><span class="line"><span class="comment">#auth=true                    #开启认证模式，默认关闭</span></span><br><span class="line"><span class="comment">#keyFile=/usr/local/mongodb/keyfile/keyfile   #鉴权文件</span></span><br></pre></td></tr></table></figure>
+
+<p>2、创建副本集认证key文件</p>
+<blockquote>
+<p>三个节点必须用<strong>同一份keyfile</strong>，在一台机器生成，拷贝到另外两台，并且修改文件属性为600</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl rand -base64 90 -out ./keyfile</span><br><span class="line">cp keyfile /usr/<span class="built_in">local</span>/mongodb/keyfile/</span><br><span class="line">chmod 600 /usr/<span class="built_in">local</span>/mongodb/keyfile/keyfile</span><br></pre></td></tr></table></figure>
+
+<p>3、关闭副本集</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mongo --port 27018</span><br><span class="line">&gt;use admin</span><br><span class="line">&gt;db.shutdownServer()</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl stop mongodb</span><br></pre></td></tr></table></figure>
+
+
+
+<p>4、修改每个节点的配置文件 mongo.conf</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf</span><br><span class="line"></span><br><span class="line">bind_ip=10.101.70.67</span><br><span class="line">port=27017</span><br><span class="line">fork=<span class="literal">true</span></span><br><span class="line">logappend=<span class="literal">true</span></span><br><span class="line">shardsvr=<span class="literal">true</span></span><br><span class="line">directoryperdb=<span class="literal">true</span></span><br><span class="line">replSet=hdreplset</span><br><span class="line">auth=<span class="literal">true</span>                    <span class="comment">#开启认证模式，默认关闭</span></span><br><span class="line">keyFile=/usr/<span class="built_in">local</span>/mongodb/keyfile/keyfile   <span class="comment">#鉴权文件</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>5、重启副本集</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl start mongodb</span><br></pre></td></tr></table></figure>
+
+
+
+<p>6、认证登录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mongo  10.101.70.67:27017/admin -u admin -p 123456</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mongo 10.101.70.67</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> <span class="keyword">admin</span></span><br><span class="line">db.auth(<span class="string">"admin"</span>,<span class="string">"123456"</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>7、设置MongoDB自动备份</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 7 * * * mongodump --host 10.101.70.67:27017 -u admin -p 123456 -o /data/mongodata/$(date +\%Y\%m\%d)</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>MongoDB</tag>
+        <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2019/12/28/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+]]></content>
+  </entry>
+</search>
