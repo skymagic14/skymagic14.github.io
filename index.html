@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next pisces use-motion" lang="en">
+<html class="theme-next pisces use-motion" lang="zh-CN">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -83,7 +83,7 @@
 <meta property="og:title" content="xie">
 <meta property="og:url" content="http://64.64.235.189/index.html">
 <meta property="og:site_name" content="xie">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="xie zh">
 <meta name="twitter:card" content="summary">
 
@@ -133,7 +133,7 @@
 
 <meta name="generator" content="Hexo 4.2.0"></head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
 
   
   
@@ -178,7 +178,7 @@
       
         
         <li class="menu-item menu-item-home">
-          <a href="/%20" rel="section">
+          <a href="/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
@@ -187,8 +187,18 @@
         </li>
       
         
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-categories">
-          <a href="/categories/%20" rel="section">
+          <a href="/categories/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
@@ -198,7 +208,7 @@
       
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives/%20" rel="section">
+          <a href="/archives/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
@@ -273,7 +283,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://64.64.235.189/2019/12/28/MongoDB/">
+    <link itemprop="mainEntityOfPage" href="http://64.64.235.189/2019/12/27/MongoDB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xie zh">
@@ -292,7 +302,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/12/28/MongoDB/" itemprop="url">MongoDB集群（副本集）安装教程</a></h1>
+                <a class="post-title-link" href="/2019/12/27/MongoDB/" itemprop="url">MongoDB集群（副本集）安装教程</a></h1>
         
 
         <div class="post-meta">
@@ -304,7 +314,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-28T03:03:44-05:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-28T03:03:44+08:00">
                 2019-12-28
               </time>
             
@@ -396,8 +406,7 @@
 
       
         
-          
-            <h4 id="一、准备工作"><a href="#一、准备工作" class="headerlink" title="一、准备工作"></a>一、准备工作</h4><table>
+          <h4 id="一、准备工作"><a href="#一、准备工作" class="headerlink" title="一、准备工作"></a>一、准备工作</h4><table>
 <thead>
 <tr>
 <th>节点</th>
@@ -426,315 +435,13 @@
 <li>确定linux系统版本：</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat /etc/redhat-release</span></span><br><span class="line">CentOS Linux release 7.4.1708 (Core)</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>关闭防火墙</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl disable firewalld</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>关闭selinux</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setenforce 0</span><br><span class="line">vi /etc/sysconfig/selinux</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2019/12/28/MongoDB/image-20191129095235119.png" alt="Mongodb"></p>
-<h4 id="二、部署MongoDB"><a href="#二、部署MongoDB" class="headerlink" title="二、部署MongoDB"></a>二、部署MongoDB</h4><p>1、下载MongoDB4.0.6安装包</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.0.6.tgz</span><br></pre></td></tr></table></figure>
-
-<p>2、解压安装包，把目录重命名移动到usr/local目录下</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf mongodb-linux-x86_64-rhel70-4.0.6.tgz</span><br><span class="line">mv mongodb-linux-x86_64-rhel70-4.0.6 mongodb</span><br><span class="line">mv mongodb /usr/<span class="built_in">local</span>/</span><br></pre></td></tr></table></figure>
-
-<p>3、新建数据库目录、日志文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/mongodb</span><br><span class="line">mkdir data</span><br><span class="line">mkdir logs</span><br><span class="line"><span class="built_in">cd</span> logs</span><br><span class="line">touch mongodb.log</span><br></pre></td></tr></table></figure>
-
-<p>4、新建MongoDB配置文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vi /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf</span><br><span class="line"></span><br><span class="line">dbpath=/usr/<span class="built_in">local</span>/mongodb/data/db           <span class="comment">#数据库文件</span></span><br><span class="line">logpath=/usr/<span class="built_in">local</span>/mongodb/logs/mongodb.log <span class="comment">#日志文件</span></span><br><span class="line">bind_ip=10.101.70.67</span><br><span class="line">port=27017</span><br><span class="line">fork=<span class="literal">true</span>                                   <span class="comment">#是否以守护进程方式运行</span></span><br><span class="line">logappend=<span class="literal">true</span>                              <span class="comment">#是否追加写入日志</span></span><br><span class="line">shardsvr=<span class="literal">true</span></span><br><span class="line">directoryperdb=<span class="literal">true</span></span><br><span class="line">replSet=hdreplset</span><br><span class="line">auth=<span class="literal">false</span>                                   <span class="comment">#是否开启认证,默认是不开启认证</span></span><br><span class="line">keyFile=/usr/<span class="built_in">local</span>/mongodb/keyfile/keyfile  <span class="comment">#认证key位置（默认无）</span></span><br></pre></td></tr></table></figure>
-
-<p>5、配置环境变量</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> MONGODB_HOME=/usr/<span class="built_in">local</span>/mongodb  </span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$MONGODB_HOME</span>/bin</span><br></pre></td></tr></table></figure>
-
-<p>6、配置生效</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
-
-<p>7、MongoDB自启动脚本</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">vi /usr/lib/systemd/system/mongodb.service</span><br><span class="line"></span><br><span class="line">[Unit]</span><br><span class="line">Description=mongodb</span><br><span class="line">After=network.target remote-fs.target nss-lookup.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/usr/<span class="built_in">local</span>/mongodb/bin/mongod -f /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf</span><br><span class="line">ExecReload=/bin/<span class="built_in">kill</span> -s HUP <span class="variable">$MAINPID</span></span><br><span class="line">ExecStop=/usr/<span class="built_in">local</span>/mongodb/bin/mongod --shutdown -f /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf</span><br><span class="line">PrivateTmp=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/rc.d/rc.local <span class="comment">#加入下面的自启动脚本 </span></span><br><span class="line">/usr/<span class="built_in">local</span>/mongodb/bin/mongod -f /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf </span><br><span class="line"></span><br><span class="line"><span class="comment">##这种的话后面启动使用如下命令</span></span><br><span class="line"><span class="comment">#  /usr/local/mongodb/bin/mongod -f /usr/local/mongodb/bin/mongodb.conf</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>8、刷新配置，启动mongodb并设置自运行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start mongodb</span><br><span class="line">systemctl <span class="built_in">enable</span> mongodb</span><br></pre></td></tr></table></figure>
-
-
-
-<blockquote>
-<p>同样操作部署三台，登录成功说明安装正常(目前是未开启认证状态)</p>
-<p>mongo 10.101.70.67:27017</p>
-<p>mongo 10.101.70.68:27017</p>
-<p>mongo 10.101.70.69:27017</p>
-</blockquote>
-<h4 id="三、配置MongoDB集群"><a href="#三、配置MongoDB集群" class="headerlink" title="三、配置MongoDB集群"></a>三、配置MongoDB集群</h4><p>1、登录主节点</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo 10.101.72.67:27017</span><br></pre></td></tr></table></figure>
-
-<p>2、初始化副本集</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rs.initiate()</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	"info2" : "no configuration specified. Using a default configuration for the <span class="keyword">set</span><span class="string">",</span></span><br><span class="line"><span class="string">	"</span>me<span class="string">" : "</span><span class="number">10.101</span><span class="number">.70</span><span class="number">.67</span>:<span class="number">27017</span><span class="string">",</span></span><br><span class="line"><span class="string">	"</span>ok<span class="string">" : 1,</span></span><br><span class="line"><span class="string">	"</span>operationTime<span class="string">" : Timestamp(1552800562, 1),</span></span><br><span class="line"><span class="string">	"</span>$clusterTime<span class="string">" : &#123;</span></span><br><span class="line"><span class="string">		"</span>clusterTime<span class="string">" : Timestamp(1552800562, 1),</span></span><br><span class="line"><span class="string">		"</span>signature<span class="string">" : &#123;</span></span><br><span class="line"><span class="string">			"</span><span class="keyword">hash</span><span class="string">" : BinData(0,"</span>AAAAAAAAAAAAAAAAAAAAAAAAAAA=<span class="string">"),</span></span><br><span class="line"><span class="string">			"</span>keyId<span class="string">" : NumberLong(0)</span></span><br><span class="line"><span class="string">		&#125;</span></span><br><span class="line"><span class="string">	&#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>3、将该节点设置为主节点</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rs.conf()</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	"_id" : "hdreplset",</span><br><span class="line">	"version" : 1,</span><br><span class="line">	"protocolVersion" : NumberLong(1),</span><br><span class="line">	"writeConcernMajorityJournalDefault" : true,</span><br><span class="line">	"members" : [</span><br><span class="line">		&#123;</span><br><span class="line">			"_id" : 0,</span><br><span class="line">			"host" : "10.101.70.67:27017",</span><br><span class="line">			"arbiterOnly" : false,</span><br><span class="line">			"buildIndexes" : true,</span><br><span class="line">			"hidden" : false,</span><br><span class="line">			"priority" : 1,</span><br><span class="line">			"tags" : &#123;</span><br><span class="line">				</span><br><span class="line">			&#125;,</span><br><span class="line">			"slaveDelay" : NumberLong(0),</span><br><span class="line">			"votes" : 1</span><br><span class="line">		&#125;</span><br><span class="line">	],</span><br><span class="line">	"settings" : &#123;</span><br><span class="line">		"chainingAllowed" : true,</span><br><span class="line">		"heartbeatIntervalMillis" : 2000,</span><br><span class="line">		"heartbeatTimeoutSecs" : 10,</span><br><span class="line">		"electionTimeoutMillis" : 10000,</span><br><span class="line">		"catchUpTimeoutMillis" : -1,</span><br><span class="line">		"catchUpTakeoverDelayMillis" : 30000,</span><br><span class="line">		"getLastErrorModes" : &#123;</span><br><span class="line">			</span><br><span class="line">		&#125;,</span><br><span class="line">		"getLastErrorDefaults" : &#123;</span><br><span class="line">			"w" : 1,</span><br><span class="line">			"wtimeout" : 0</span><br><span class="line">		&#125;,</span><br><span class="line">		"replicaSetId" : ObjectId("5c8ddb326676686d9715c116")</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>4、将另外两个节点加入副本集</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rs.add("10.101.70.68:27017")</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	"ok" : 1,</span><br><span class="line">	"operationTime" : Timestamp(1552800715, 1),</span><br><span class="line">	"$clusterTime" : &#123;</span><br><span class="line">		"clusterTime" : Timestamp(1552800715, 1),</span><br><span class="line">		"signature" : &#123;</span><br><span class="line">			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),</span><br><span class="line">			"keyId" : NumberLong(0)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rs.add("10.101.70.69:27017")</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	"ok" : 1,</span><br><span class="line">	"operationTime" : Timestamp(1552800726, 1),</span><br><span class="line">	"$clusterTime" : &#123;</span><br><span class="line">		"clusterTime" : Timestamp(1552800726, 1),</span><br><span class="line">		"signature" : &#123;</span><br><span class="line">			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),</span><br><span class="line">			"keyId" : NumberLong(0)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>5、查看副本集状态</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cfg = rs.conf()</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	"_id" : "hdreplset",</span><br><span class="line">	"version" : 4,</span><br><span class="line">	"protocolVersion" : NumberLong(1),</span><br><span class="line">	"writeConcernMajorityJournalDefault" : true,</span><br><span class="line">	"members" : [</span><br><span class="line">		&#123;</span><br><span class="line">			"_id" : 0,</span><br><span class="line">			"host" : "10.101.70.67:27017",</span><br><span class="line">			"arbiterOnly" : false,</span><br><span class="line">			"buildIndexes" : true,</span><br><span class="line">			"hidden" : false,</span><br><span class="line">			"priority" : 2,</span><br><span class="line">			"tags" : &#123;</span><br><span class="line">				</span><br><span class="line">			&#125;,</span><br><span class="line">			"slaveDelay" : NumberLong(0),</span><br><span class="line">			"votes" : 1</span><br><span class="line">		&#125;,</span><br><span class="line">		&#123;</span><br><span class="line">			"_id" : 1,</span><br><span class="line">			"host" : "10.101.70.68:27017",</span><br><span class="line">			"arbiterOnly" : false,</span><br><span class="line">			"buildIndexes" : true,</span><br><span class="line">			"hidden" : false,</span><br><span class="line">			"priority" : 1,</span><br><span class="line">			"tags" : &#123;</span><br><span class="line">				</span><br><span class="line">			&#125;,</span><br><span class="line">			"slaveDelay" : NumberLong(0),</span><br><span class="line">			"votes" : 1</span><br><span class="line">		&#125;,</span><br><span class="line">		&#123;</span><br><span class="line">			"_id" : 2,</span><br><span class="line">			"host" : "10.101.70.69:27017",</span><br><span class="line">			"arbiterOnly" : false,</span><br><span class="line">			"buildIndexes" : true,</span><br><span class="line">			"hidden" : false,</span><br><span class="line">			"priority" : 1,</span><br><span class="line">			"tags" : &#123;</span><br><span class="line">				</span><br><span class="line">			&#125;,</span><br><span class="line">			"slaveDelay" : NumberLong(0),</span><br><span class="line">			"votes" : 1</span><br><span class="line">		&#125;</span><br><span class="line">	],</span><br><span class="line">	"settings" : &#123;</span><br><span class="line">		"chainingAllowed" : true,</span><br><span class="line">		"heartbeatIntervalMillis" : 2000,</span><br><span class="line">		"heartbeatTimeoutSecs" : 10,</span><br><span class="line">		"electionTimeoutMillis" : 10000,</span><br><span class="line">		"catchUpTimeoutMillis" : -1,</span><br><span class="line">		"catchUpTakeoverDelayMillis" : 30000,</span><br><span class="line">		"getLastErrorModes" : &#123;</span><br><span class="line">			</span><br><span class="line">		&#125;,</span><br><span class="line">		"getLastErrorDefaults" : &#123;</span><br><span class="line">			"w" : 1,</span><br><span class="line">			"wtimeout" : 0</span><br><span class="line">		&#125;,</span><br><span class="line">		"replicaSetId" : ObjectId("5db69761d02396826793590d")</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p> priority参数表示的是节点的优先级，越大优先级越高 , 把10.101.72.67作为优先级最高的主节点 </p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdreplset:PRIMARY&gt; cfg.members[0].priority = 2</span><br></pre></td></tr></table></figure>
-</blockquote>
-<p>6、保存配置</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">rs.reconfig(cfg)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	"ok" : 1,</span><br><span class="line">	"operationTime" : Timestamp(1552800913, 1),</span><br><span class="line">	"$clusterTime" : &#123;</span><br><span class="line">		"clusterTime" : Timestamp(1552800913, 1),</span><br><span class="line">		"signature" : &#123;</span><br><span class="line">			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),</span><br><span class="line">			"keyId" : NumberLong(0)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>7、确认副本集优先级是否生效</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cfg = rs.conf()</span><br></pre></td></tr></table></figure>
-
-<p>8、从节点配置</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mongo 10.101.70.68:27017</span><br><span class="line">hdreplset:SECONDARY&gt; db.getMongo().setSlaveOk()</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mongo 10.101.70.69:27017</span><br><span class="line">hdreplset:SECONDARY&gt; db.getMongo().setSlaveOk()</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="四、新建MongoDB用户"><a href="#四、新建MongoDB用户" class="headerlink" title="四、新建MongoDB用户"></a>四、新建MongoDB用户</h4><p>1、登录主节点</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo 10.101.70.67:27017</span><br></pre></td></tr></table></figure>
-
-<p>2、添加用户</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#root用户</span></span><br><span class="line"><span class="keyword">use</span> <span class="keyword">admin</span>;</span><br><span class="line">db.createUser(&#123;user:"admin",pwd:"123456",roles:[&#123;role:"root",db:"admin"&#125;]&#125;);</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#数据库管理员</span></span><br><span class="line"><span class="keyword">use</span> wx-<span class="keyword">test</span></span><br><span class="line">db.createUser(&#123;<span class="keyword">user</span>: <span class="string">"wx-test"</span>, pwd: <span class="string">"123456"</span>, <span class="keyword">roles</span>: [&#123; <span class="keyword">role</span>: <span class="string">"dbOwner"</span>, db: <span class="string">"wx-test"</span> &#125;]&#125;)</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="五、添加授权配置"><a href="#五、添加授权配置" class="headerlink" title="五、添加授权配置"></a>五、添加授权配置</h4><p>1、修改配置文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vi /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf</span><br><span class="line"></span><br><span class="line">bind_ip=10.101.70.67</span><br><span class="line">port=27017</span><br><span class="line">fork=<span class="literal">true</span></span><br><span class="line">logappend=<span class="literal">true</span></span><br><span class="line">shardsvr=<span class="literal">true</span></span><br><span class="line">directoryperdb=<span class="literal">true</span></span><br><span class="line">replSet=hdreplset</span><br><span class="line"><span class="comment">#auth=true                    #开启认证模式，默认关闭</span></span><br><span class="line"><span class="comment">#keyFile=/usr/local/mongodb/keyfile/keyfile   #鉴权文件</span></span><br></pre></td></tr></table></figure>
-
-<p>2、创建副本集认证key文件</p>
-<blockquote>
-<p>三个节点必须用<strong>同一份keyfile</strong>，在一台机器生成，拷贝到另外两台，并且修改文件属性为600</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">openssl rand -base64 90 -out ./keyfile</span><br><span class="line">cp keyfile /usr/<span class="built_in">local</span>/mongodb/keyfile/</span><br><span class="line">chmod 600 /usr/<span class="built_in">local</span>/mongodb/keyfile/keyfile</span><br></pre></td></tr></table></figure>
-
-<p>3、关闭副本集</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mongo --port 27018</span><br><span class="line">&gt;use admin</span><br><span class="line">&gt;db.shutdownServer()</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop mongodb</span><br></pre></td></tr></table></figure>
-
-
-
-<p>4、修改每个节点的配置文件 mongo.conf</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vi /usr/<span class="built_in">local</span>/mongodb/bin/mongodb.conf</span><br><span class="line"></span><br><span class="line">bind_ip=10.101.70.67</span><br><span class="line">port=27017</span><br><span class="line">fork=<span class="literal">true</span></span><br><span class="line">logappend=<span class="literal">true</span></span><br><span class="line">shardsvr=<span class="literal">true</span></span><br><span class="line">directoryperdb=<span class="literal">true</span></span><br><span class="line">replSet=hdreplset</span><br><span class="line">auth=<span class="literal">true</span>                    <span class="comment">#开启认证模式，默认关闭</span></span><br><span class="line">keyFile=/usr/<span class="built_in">local</span>/mongodb/keyfile/keyfile   <span class="comment">#鉴权文件</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>5、重启副本集</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start mongodb</span><br></pre></td></tr></table></figure>
-
-
-
-<p>6、认证登录</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo  10.101.70.67:27017/admin -u admin -p 123456</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo 10.101.70.67</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> <span class="keyword">admin</span></span><br><span class="line">db.auth(<span class="string">"admin"</span>,<span class="string">"123456"</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>7、设置MongoDB自动备份</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 7 * * * mongodump --host 10.101.70.67:27017 -u admin -p 123456 -o /data/mongodata/$(date +\%Y\%m\%d)</span><br></pre></td></tr></table></figure>
-
-
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://64.64.235.189/2019/12/28/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="xie zh">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="xie">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/12/28/hello-world/" itemprop="url">Hello World</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-28T00:45:41-05:00">
-                2019-12-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Words count in article&#58;</span>
-                
-                <span title="Words count in article">
-                  73
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">
-                  1
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/12/27/MongoDB/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -816,9 +523,9 @@
             
               <div class="site-state-item site-state-posts">
               
-                <a href="/archives/%20%7C%7C%20archive">
+                <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">1</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
