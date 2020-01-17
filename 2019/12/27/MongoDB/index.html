@@ -88,7 +88,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://64.64.235.189/2019/12/27/MongoDB/image-20191129095235119.png">
 <meta property="article:published_time" content="2019-12-27T19:03:44.000Z">
-<meta property="article:modified_time" content="2019-12-31T07:06:14.887Z">
+<meta property="article:modified_time" content="2020-01-17T08:07:44.760Z">
 <meta property="article:author" content="xie zh">
 <meta property="article:tag" content="MongoDB">
 <meta property="article:tag" content="数据库">
@@ -215,7 +215,7 @@
       
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
+          <a href="/archives/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
             
@@ -378,7 +378,7 @@
                   <span class="post-meta-item-text">Words count in article&#58;</span>
                 
                 <span title="Words count in article">
-                  1.3k
+                  1.4k
                 </span>
               
 
@@ -394,7 +394,7 @@
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
                 <span title="Reading time">
-                  6
+                  7
                 </span>
               
             </div>
@@ -585,7 +585,13 @@
 
 
 <p>7、设置MongoDB自动备份</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">0 7 * * * mongodump --host 10.101.70.67:27017 -u admin -p 123456 -o /data/mongodata/$(date +\%Y\%m\%d)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">##编辑sh脚本是先MongoDB定时备份</span></span><br><span class="line">vi mongodump.sh</span><br><span class="line"></span><br><span class="line"><span class="meta">#! /usr/bin/env bash</span></span><br><span class="line">DBNAME=(wx-server wx-usercenter)</span><br><span class="line">USER=<span class="string">"admin"</span></span><br><span class="line">PASSWORD=<span class="string">"123456"</span></span><br><span class="line">OUT_DIR=<span class="string">"/data/mongodata/"</span></span><br><span class="line">DATE=$(date +%Y%m%d%H)</span><br><span class="line">HOST=<span class="string">"10.101.70.67:27017"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"dump start"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"database name is <span class="variable">$&#123;DBNAME&#125;</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"out paht is <span class="variable">$&#123;OUT_DIR&#125;</span><span class="variable">$&#123;DATE&#125;</span>"</span></span><br><span class="line"><span class="keyword">for</span> ONEDB <span class="keyword">in</span> <span class="variable">$&#123;DBNAME[@]&#125;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    mongodump -h <span class="variable">$&#123;HOST&#125;</span> -u <span class="variable">$&#123;USER&#125;</span> -p <span class="variable">$&#123;PASSWORD&#125;</span> --authenticationDatabase <span class="variable">$&#123;USER&#125;</span> -d <span class="variable">$&#123;ONEDB&#125;</span> -o <span class="variable">$&#123;OUT_DIR&#125;</span><span class="variable">$&#123;DATE&#125;</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;OUT_DIR&#125;</span></span><br><span class="line">tar -czvf <span class="string">"<span class="variable">$&#123;DATE&#125;</span>.tar"</span> <span class="variable">$&#123;DATE&#125;</span></span><br><span class="line">rm -rf <span class="variable">$&#123;DATE&#125;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"dump end"</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">##定时执行脚本</span></span><br><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">00 17  * * * /usr/<span class="built_in">local</span>/mongodb/mongodump.sh</span><br></pre></td></tr></table></figure>
+
+
+
+
 
 
 
@@ -696,7 +702,7 @@
             
               <div class="site-state-item site-state-posts">
               
-                <a href="/archives">
+                <a href="/archives/">
               
                   <span class="site-state-item-count">1</span>
                   <span class="site-state-item-name">posts</span>
@@ -783,7 +789,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -797,7 +803,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">1.3k</span>
+    <span title="Site words total count">1.4k</span>
   
 </div>
 
